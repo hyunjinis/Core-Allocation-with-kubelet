@@ -14,14 +14,15 @@ spec:
         privileged: true
       resources:
         limits:
-          example.com/SLO: "0"
+          example.com/SLO1: "1"
+          example.com/SLO2: "3"
   restartPolicy: Never
   nodeSelector:
-    key: rpi2
+    key: ubuntu4
   tolerations:
-    - key: "node-role.kubernetes.io/master"
-      operator: "Exists"
-      effect: "NoSchedule"
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
