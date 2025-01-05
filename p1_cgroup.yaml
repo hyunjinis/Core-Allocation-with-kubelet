@@ -1,0 +1,19 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: p1
+spec:
+  hostPID: true
+  containers:
+    - name: p1
+      image: jjong2/all:latest
+      command: ["/bin/bash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        privileged: true
+      resources:
+        limits:
+  restartPolicy: Never
+  nodeSelector:
+    key: ubuntu4
