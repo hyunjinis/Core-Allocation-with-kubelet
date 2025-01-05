@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: cgroup-fix
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      name: cgroup-fix
+  template:
+    metadata:
+      labels:
+        name: cgroup-fix
+    spec:
+      hostPID: true
+        #tolerations:
+        #- key: "node-role.kubernetes.io/master"
+          #operator: "Exists"
+            #effect: "NoSchedule"
+            #- key: "node-role.kubernetes.io/control-plane"
+          #operator: "Exists"
+            #effect: "NoSchedule"
+      containers:
+        - name: cgroup-fix
+          image: busybox
+          command:
+            - /bin/sh
+            - -c
+            - |
+              while true; do
+              for cpuset in $(find /sys/fs/cgroup/kubepods.slice/kubepods-besteffort.slice -name cpuset.cpus 2>/dev/null); do
+                chmod 755 $cpuset
+                done
+                sleep 10
+              done
+          securityContext:
+            allowPrivilegeEscalation: true
+            privileged: true
+          volumeMounts:
+            - name: sys-fs-cgroup
+              mountPath: /sys/fs/cgroup
+              readOnly: false
+      volumes:
+        - name: sys-fs-cgroup
+          hostPath:
+            path: /sys/fs/cgroup
+            type: Directory
