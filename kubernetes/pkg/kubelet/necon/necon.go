@@ -54,8 +54,6 @@ func (nec *necon) SetCgroupPath(path string) error{
 func (nec *necon) SetPID(containerID string,namespace string) error{
 
         if namespace != "kube-system" {
-                //w,_ := exec.Command("docker","inspect","--format='{{.State.Pid}}'",containerID).Output()
-                //위 코드가 문제인듯
                 fmt.Println("%s",nec.path+"/"+containerID+"/cgroup.procs")
                 pid,err:= ioutil.ReadFile(fmt.Sprintf("%s",nec.path+"/"+containerID+"/cgroup.procs"))
                 err = ioutil.WriteFile(fmt.Sprintf("/proc/oslab/vif%d/pid",nec.count),[]byte(pid),0)
@@ -90,7 +88,7 @@ func (nec *necon) ApplyCPUAffinity(pod v1.Pod) error {
         }
 
         // 전체 코어 목록에서 제외할 코어 제거
-        allCores := []int{0, 1, 2, 3} // 예시로 4개 코어가 있다고 가정
+        allCores := []int{0, 1, 2, 3} 
         allowedCores := []string{}
         for _, core := range allCores {
                 if core != coreToExclude1 && core != coreToExclude2 {
