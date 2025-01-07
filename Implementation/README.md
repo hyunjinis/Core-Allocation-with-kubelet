@@ -1,4 +1,5 @@
-Core-Allocation-with-kubelet    [kubelet 설정 변경을 통한 cpuset 설정 자동화]
+Core-Allocation-with-kubelet    
+[kubelet 설정 변경을 통한 cpuset 설정 자동화]
 ==========================================================================
 
 **"bounded_core.sh"와 "interrupt.sh"를 통한 CPU Core 설정 방법의 한계점**
