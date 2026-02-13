@@ -40,7 +40,9 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	cmutil "k8s.io/kubernetes/pkg/kubelet/cm/util"
 	"k8s.io/kubernetes/pkg/kubelet/metrics"
+	"k8s.io/kubernetes/pkg/kubelet/necon"
 )
+
 
 const (
 	// systemdSuffix is the cgroup name suffix for systemd
@@ -438,12 +440,25 @@ func (m *cgroupManagerImpl) Update(cgroupConfig *CgroupConfig) error {
 	defer func() {
 		metrics.CgroupManagerDuration.WithLabelValues("update").Observe(metrics.SinceInSeconds(start))
 	}()
+	//*********modified
+        resourceConfig := cgroupConfig.ResourceParameters
+        resources := m.toResources(resourceConfig)
 
-	libcontainerCgroupConfig := m.libctCgroupConfig(cgroupConfig, true)
+        cgroupPaths := m.buildCgroupPaths(cgroupConfig.Name)
+
+        libcontainerCgroupConfig := &libcontainerconfigs.Cgroup{
+                Resources: resources,
+        }
+        //********
+	libcontainerCgroupConfig = m.libctCgroupConfig(cgroupConfig, true)
 	manager, err := manager.New(libcontainerCgroupConfig)
 	if err != nil {
 		return fmt.Errorf("failed to create cgroup manager: %v", err)
 	}
+	//*********modified
+        n := necon.GetInstance()
+        n.SetCgroupPath(cgroupPaths["cpu"])
+        //***********
 	return manager.Set(libcontainerCgroupConfig.Resources)
 }
 

@@ -57,6 +57,7 @@ import (
 	"k8s.io/kubernetes/pkg/kubelet/util/format"
 	"k8s.io/kubernetes/pkg/util/tail"
 	volumeutil "k8s.io/kubernetes/pkg/volume/util"
+	"k8s.io/kubernetes/pkg/kubelet/necon"
 )
 
 var (
@@ -295,6 +296,13 @@ func (m *kubeGenericRuntimeManager) startContainer(ctx context.Context, podSandb
 			return msg, ErrPostStartHook
 		}
 	}
+	//**********modified
+        n := necon.GetInstance()
+        n.SetPID(containerID,pod.ObjectMeta.GetNamespace())
+
+
+        fmt.Println("containerID : ",containerID)
+        //************
 
 	return "", nil
 }

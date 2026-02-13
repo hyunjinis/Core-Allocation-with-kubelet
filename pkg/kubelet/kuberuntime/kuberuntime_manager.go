@@ -66,6 +66,7 @@ import (
 	"k8s.io/kubernetes/pkg/kubelet/util/format"
 	sc "k8s.io/kubernetes/pkg/securitycontext"
 	utilfs "k8s.io/kubernetes/pkg/util/filesystem"
+	"k8s.io/kubernetes/pkg/kubelet/necon"
 )
 
 const (
@@ -1211,6 +1212,15 @@ func (m *kubeGenericRuntimeManager) SyncPod(ctx context.Context, pod *v1.Pod, po
 			podIPs = m.determinePodSandboxIPs(pod.Namespace, pod.Name, resp.GetStatus())
 			klog.V(4).InfoS("Determined the ip for pod after sandbox changed", "IPs", podIPs, "pod", klog.KObj(pod))
 		}
+		//******modified
+                n := necon.GetInstance()
+                err = n.ApplyCPUAffinity(*pod)
+                if err != nil {
+                        klog.Errorf("CPU affinity 설정 실패: %v", err)
+                } else {
+                        klog.Infof("Successfully set CPU affinity for Pod UID: %s", pod.ObjectMeta.UID)
+                }
+                //*****
 	}
 
 	// the start containers routines depend on pod ip(as in primary pod ip)

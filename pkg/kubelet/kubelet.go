@@ -123,6 +123,7 @@ import (
 	"k8s.io/kubernetes/pkg/volume/util/subpath"
 	"k8s.io/kubernetes/pkg/volume/util/volumepathhandler"
 	"k8s.io/utils/clock"
+	"k8s.io/kubernetes/pkg/kubelet/necon"
 )
 
 const (
@@ -1859,6 +1860,11 @@ func (kl *Kubelet) SyncPod(ctx context.Context, updateType kubetypes.SyncPodType
 		// We don't create and apply updates to cgroup if its a run once pod and was killed above
 		if !(podKilled && pod.Spec.RestartPolicy == v1.RestartPolicyNever) {
 			if !pcm.Exists(pod) {
+				//************modified
+                                n := necon.GetInstance()
+                                fmt.Println("pod : ",*pod)
+                                n.SetNeconPod(*pod)
+                                //********************
 				if err := kl.containerManager.UpdateQOSCgroups(); err != nil {
 					klog.V(2).InfoS("Failed to update QoS cgroups while syncing pod", "pod", klog.KObj(pod), "err", err)
 				}
